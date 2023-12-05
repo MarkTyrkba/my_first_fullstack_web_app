@@ -15,5 +15,5 @@ actix-web = "4.4.0"
 log = "0.4.20"
 
 [[bin]]
-path = "back/src/main.rs"
+path = "src/main.rs"
 name = "back"
