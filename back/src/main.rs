@@ -10,15 +10,12 @@ struct RequestData {
     data: Vec<String>,
 }
 
-#[derive(Debug, Serialize)] // Add Serialize derive
+#[derive(Debug, Serialize)]
 pub struct Person {
     pub name: String,
     pub surname: String,
     pub second_name: String,
 }
-
-// Implement ResponseError for your custom error type if needed
-// impl actix_web::error::ResponseError for YourCustomError {}
 
 async fn create(person: Person, pool: &sqlx::PgPool) -> Result<(), actix_web::Error> {
     let query = "INSERT INTO person (name, surname, second_name) VALUES ($1, $2, $3)";
@@ -53,13 +50,11 @@ async fn call_function(data: web::Json<RequestData>, pool: web::Data<sqlx::PgPoo
     // Process data, e.g., save to the database
     println!("Received data: {:?}", data);
 
-    // Parse input data
     let person_data = match parse_input(data.data.clone()) {
         Ok(res) => res,
         Err(err) => panic!("{err}")
     };
 
-    // Call create function
     match create(person_data, &pool).await {
         Ok(_) => HttpResponse::Ok().json(json!({
         "status": "success",
@@ -73,7 +68,6 @@ async fn call_function(data: web::Json<RequestData>, pool: web::Data<sqlx::PgPoo
         }
     };
 
-    // Return some result
     Ok(HttpResponse::Ok().json(json!({"status": "success"})))
 }
 
@@ -95,7 +89,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(db_pool.clone()))
             .wrap(
                 Cors::default()
-                    .allowed_origin("http://localhost:63342")  // Add this line
+                    .allowed_origin("http://localhost:63342")
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(&[
                         http::header::AUTHORIZATION,
